@@ -1,17 +1,14 @@
 <script>
 	import {useForm, Hint, HintGroup, validators, minLength,email,required} from "svelte-use-form";
-	const form = useForm();
-
+	import { afterUpdate } from 'svelte';
 	export let name;
 	export let questions = 'What are your goals for today?';
 	export let counter;
-	let color = 'orange';
-	const currentTasks = [{task: 'Buy a dog'}];
+	const form = useForm();
 
-	$: {
-		console.log('CurrentTasks: ', currentTasks);
-		console.log('Counter: ', counter)
-	}
+	afterUpdate(() => {
+	  document.querySelector('.js-todo-input').focus();
+      });
 
 	const handleClick = () => {
 		const questionArr = ['What will you accomplish today?', 
@@ -28,35 +25,63 @@
 		}
 	}
 	
-	const handleInput = (e) => {
-		const newInput = e.target.value; 
-		console.log('new input: ', newInput)
-		currentTasks.push(newInput);
-		console.log('Current tasks are now: ', currentTasks)
+	let todoItems = [];
+	let newTodo = '';
 
+	function addTodo() {
+	  newTodo = newTodo.trim();
+	  if (!newTodo) return;
+
+	  const todo = {
+	      text: newTodo,
+	      checked: false,
+	      id: Date.now(),
+	  };
+
+	  todoItems = [...todoItems, todo];
+	  newTodo = '';
 	}
 
+	function toggleDone(id) {
+	  const index = todoItems.findIndex(item => item.id === Number(id));
+	  todoItems[index].checked = !todoItems[index].checked;
+	}
+
+	function deleteTodo(id) {
+	  todoItems = todoItems.filter(item => item.id !== Number(id));
+	}
 
 </script>
 
 <main>
 	<h1>Hello {name}!</h1>
-	<p style="color: {color}">{questions}</p>
+	<p>{questions}</p>
 	<button on:click={handleClick} value={questions}> Ask me another!</button>
 
 	<section>
-		<h2>Project Tasks</h2>
-		<form on:submit={handleInput} >
-			<input type='text' placeholder='Enter new task here'>	
-		</form>
-		<p>
-			{#each currentTasks as task}
-			  <label>
-				<input type=checkbox bind:checked={yes}>
-				{task}
-			  </label>
+		<div class="container">
+			<h1 class="app-title">Today's Tasks</h1>
+			<ul class="todo-list"></ul>
+			<div class="empty-state">
+			  <!-- <svg class="checklist-icon"><use href="#checklist-icon"></use></svg> -->
+			  <h2 class="empty-state__title">Add your first todo</h2>
+			</div>
+			<form on:submit|preventDefault={addTodo}>
+			  <input class="js-todo-input" type="text" aria-label="Enter a new todo item" placeholder="Enter new Task Here..." bind:value={newTodo} />
+			</form>
+		  </div>
+		  <ul class="todo-list">
+			{#each todoItems as todo (todo.id)}
+			  <li class="todo-item {todo.checked ? 'done' : ''}">
+				<input id={todo.id} type="checkbox" />
+				<label for={todo.id} class="tick" on:click={() => toggleDone(todo.id)}></label>
+				<span>{todo.text}</span>
+				<button class="delete-todo" on:click={() => deleteTodo(todo.id)}>
+					X
+				  </button>
+			  </li>
 			{/each}
-		</p>
+		  </ul>
 	</section>
 </main>
 
