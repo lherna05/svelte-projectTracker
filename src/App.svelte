@@ -6,7 +6,7 @@
 	export let questions = 'What are your goals for today?';
 	export let counter;
 	let color = 'orange';
-	const currentTasks = [];
+	const currentTasks = [{task: 'Buy a dog'}];
 
 	$: {
 		console.log('CurrentTasks: ', currentTasks);
@@ -30,6 +30,7 @@
 	
 	const handleInput = (e) => {
 		const newInput = e.target.value; 
+		console.log('new input: ', newInput)
 		currentTasks.push(newInput);
 		console.log('Current tasks are now: ', currentTasks)
 
@@ -49,7 +50,12 @@
 			<input type='text' placeholder='Enter new task here'>	
 		</form>
 		<p>
-			{currentTasks}
+			{#each currentTasks as task}
+			  <label>
+				<input type=checkbox bind:checked={yes}>
+				{task}
+			  </label>
+			{/each}
 		</p>
 	</section>
 </main>
