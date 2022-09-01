@@ -2,8 +2,8 @@
 	import {useForm, Hint, HintGroup, validators, minLength,email,required} from "svelte-use-form";
 	import { afterUpdate } from 'svelte';
 	export let name;
-	export let questions = 'What are your goals for today?';
-	export let counter;
+	let counter = 0;
+	let questions; 
 	const form = useForm();
 
 	afterUpdate(() => {
@@ -55,10 +55,8 @@
 
 <main>
 	<h1>Hello {name}!</h1>
-	<p>{questions}</p>
-	<button on:click={handleClick} value={questions}> Ask me another!</button>
-
-	<section>
+	<!-- <p>{questions}</p> -->
+	<!-- <button on:click={handleClick} value={questions}> Ask me another!</button> -->
 		<div class="container">
 			<h1 class="app-title">Today's Tasks</h1>
 			<ul class="todo-list"></ul>
@@ -70,6 +68,7 @@
 			  <input class="js-todo-input" type="text" aria-label="Enter a new todo item" placeholder="Enter new Task Here..." bind:value={newTodo} />
 			</form>
 		  </div>
+		<div>
 		  <ul class="todo-list">
 			{#each todoItems as todo (todo.id)}
 			  <li class="todo-item {todo.checked ? 'done' : ''}">
@@ -82,7 +81,7 @@
 			  </li>
 			{/each}
 		  </ul>
-	</section>
+		</div>  
 </main>
 
 <style>

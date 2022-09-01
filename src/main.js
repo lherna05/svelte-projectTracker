@@ -4,8 +4,6 @@ const app = new App({
 	target: document.body,
 	props: {
 		name: 'Lani',
-		questions: '', 
-		counter: 0
 	}
 });
 
